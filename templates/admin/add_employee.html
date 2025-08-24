@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% block title %}Thêm nhân viên - Face Attendance{% endblock %}
+
+{% block content %}
+<div class="bg-white card p-6">
+  <h3 class="text-xl font-bold text-gray-800 mb-6">Thêm Nhân Viên Mới</h3>
+
+  <form id="formAddEmployee" class="grid grid-cols-1 md:grid-cols-2 gap-6" enctype="multipart/form-data">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Họ và Tên *</label>
+      <input type="text" name="name" required
+             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+      <input type="email" name="email"
+             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Số Điện Thoại</label>
+      <input type="tel" name="phone"
+             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Chức vụ</label>
+      <input type="text" name="position"
+             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+    </div>
+
+    <div class="md:col-span-2">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Ảnh Nhân Viên * (Có thể thêm nhiều ảnh)</label>
+      <div class="border-2 border-dashed border-gray-300 rounded-lg p-6">
+        <!-- Hidden inputs for multiple images -->
+        <input type="file" multiple accept="image/*" class="hidden" id="faceFile" onchange="previewMultipleFaces(event)">
+        
+        <!-- Upload buttons -->
+        <div class="text-center mb-4">
+          <div class="flex justify-center space-x-3 mb-4">
+            <button type="button" onclick="document.getElementById('faceFile').click()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+              📂 Chọn Ảnh
+            </button>
+            <button type="button" onclick="openCamera()"
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg">
+              📷 Chụp Ảnh
+            </button>
+          </div>
+        </div>
+
+        <!-- Image preview grid -->
+        <div id="imagePreviewGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+          <div id="emptyState" class="col-span-full text-center text-gray-500">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2
+                       l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12
+                       a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12
+                       a2 2 0 002 2z"/>
+            </svg>
+            <p>Chưa có ảnh nào</p>
+          </div>
+        </div>
+
+        <!-- Camera interface -->
+        <div id="cameraWrap" class="hidden text-center">
+          <video id="camera" autoplay class="w-64 h-48 border rounded-lg mx-auto"></video>
+          <div class="mt-3 space-x-3">
+            <button type="button" onclick="capturePhoto()"
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+              📸 Chụp
+            </button>
+            <button type="button" onclick="closeCamera()"
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+              ❌ Đóng
+            </button>
+          </div>
+          <canvas id="canvas" class="hidden"></canvas>
+        </div>
+
+        <!-- Image counter -->
+        <div id="imageCounter" class="text-center text-sm text-gray-600 hidden">
+          Đã chọn: <span id="imageCount">0</span> ảnh
+        </div>
+      </div>
+    </div>
+
+    <div class="md:col-span-2">
+      <button type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">
+        ➕ Thêm Nhân Viên
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+let selectedImages = [];
+let imageIdCounter = 0;
+
+function previewMultipleFaces(e) {
+  const files = Array.from(e.target.files);
+  
+  files.forEach(file => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        addImageToPreview(reader.result, file, 'file');
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+  
+  // Clear the file input for next selection
+  e.target.value = '';
+}
+
+function addImageToPreview(src, fileData, source) {
+  const imageId = ++imageIdCounter;
+  const imageObj = {
+    id: imageId,
+    src: src,
+    file: fileData,
+    source: source // 'file' or 'camera'
+  };
+  
+  selectedImages.push(imageObj);
+  
+  // Hide empty state
+  document.getElementById('emptyState').style.display = 'none';
+  
+  // Add to preview grid
+  const grid = document.getElementById('imagePreviewGrid');
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'relative group';
+  imageDiv.id = `image-${imageId}`;
+  
+  imageDiv.innerHTML = `
+    <img src="${src}" class="w-full h-32 object-cover rounded-lg border shadow-sm">
+    <button type="button" onclick="removeImage(${imageId})" 
+            class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+      ×
+    </button>
+    <div class="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+      ${source === 'camera' ? '📷' : '📂'}
+    </div>
+  `;
+  
+  grid.appendChild(imageDiv);
+  updateImageCounter();
+}
+
+function removeImage(imageId) {
+  selectedImages = selectedImages.filter(img => img.id !== imageId);
+  document.getElementById(`image-${imageId}`).remove();
+  
+  if (selectedImages.length === 0) {
+    document.getElementById('emptyState').style.display = 'block';
+  }
+  
+  updateImageCounter();
+}
+
+function updateImageCounter() {
+  const counter = document.getElementById('imageCounter');
+  const count = document.getElementById('imageCount');
+  
+  if (selectedImages.length > 0) {
+    counter.classList.remove('hidden');
+    count.textContent = selectedImages.length;
+  } else {
+    counter.classList.add('hidden');
+  }
+}
+
+// Camera functions
+let stream;
+async function openCamera() {
+  const wrap = document.getElementById('cameraWrap');
+  wrap.classList.remove('hidden');
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    document.getElementById('camera').srcObject = stream;
+  } catch (error) {
+    alert('Không thể truy cập camera: ' + error.message);
+    closeCamera();
+  }
+}
+
+function closeCamera() {
+  document.getElementById('cameraWrap').classList.add('hidden');
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+  }
+}
+
+function capturePhoto() {
+  const video = document.getElementById('camera');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  const dataUrl = canvas.toDataURL("image/png");
+  
+  // Convert dataURL to blob for consistency
+  fetch(dataUrl)
+    .then(res => res.blob())
+    .then(blob => {
+      addImageToPreview(dataUrl, blob, 'camera');
+    });
+  
+  closeCamera();
+}
+
+async function resizeImage(base64Str, maxWidth = 800, maxHeight = 800) {
+  return new Promise((resolve) => {
+    let img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      let canvas = document.createElement('canvas');
+      let ctx = canvas.getContext('2d');
+      let ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+      canvas.width = img.width * ratio;
+      canvas.height = img.height * ratio;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL("image/jpeg", 0.8)); 
+    };
+  });
+}
+
+// Form submission
+document.getElementById('formAddEmployee').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  
+  if (selectedImages.length === 0) {
+    alert('Vui lòng chọn ít nhất một ảnh cho nhân viên!');
+    return;
+  }
+  
+  const form = ev.target;
+  const fd = new FormData(form);
+  
+  // Remove the original file input from FormData
+  fd.delete('face_image');
+  
+  // Process and add all selected images
+  for (let i = 0; i < selectedImages.length; i++) {
+    const imageObj = selectedImages[i];
+    let processedImage;
+    
+    if (imageObj.source === 'camera') {
+      // Camera image is already a data URL, resize it
+      processedImage = await resizeImage(imageObj.src);
+      // Convert to blob
+      const response = await fetch(processedImage);
+      const blob = await response.blob();
+      fd.append(`face_images`, blob, `camera_${i}.jpg`);
+    } else {
+      // File image, resize if needed
+      if (imageObj.file.size > 1024 * 1024) { // If larger than 1MB, resize
+        processedImage = await resizeImage(imageObj.src);
+        const response = await fetch(processedImage);
+        const blob = await response.blob();
+        fd.append(`face_images`, blob, `resized_${imageObj.file.name}`);
+      } else {
+        fd.append(`face_images`, imageObj.file);
+      }
+    }
+  }
+  
+  // Add image count for backend processing
+  fd.append('image_count', selectedImages.length);
+  
+  try {
+    const res = await fetch("{{ url_for('admin.add_employee') }}", { 
+      method: "POST", 
+      body: fd 
+    });
+    const data = await res.json();
+    
+    alert(data.message || "Thêm nhân viên thành công!");
+    
+    if (data.status === 'ok') {
+      window.location.href = "{{ url_for('admin.employees') }}";
+    }
+  } catch (error) {
+    alert('Có lỗi xảy ra: ' + error.message);
+  }
+});
+</script>
+
+<style>
+#imagePreviewGrid img {
+  transition: transform 0.2s;
+}
+
+#imagePreviewGrid img:hover {
+  transform: scale(1.05);
+}
+
+.group:hover .opacity-0 {
+  opacity: 1;
+}
+</style>
+{% endblock %}
