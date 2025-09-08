@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Hệ thống chấm công</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Chấm công</h1>
+
+    <div class="time-container mb-6">
+      <div id="currentTime" class="text-4xl font-bold text-green-400"></div>
+      <div id="currentDate" class="text-lg text-green-200 mt-1"></div>
+    </div>
+
+    <div class="camera-box">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="canvas" style="display:none;"></canvas>
+    </div>
+
+    <div id="result">
+      <h2 id="employee-name">Chưa nhận diện</h2>
+      <p id="status"></p>
+    </div>
+
+    <div class="button_group">
+      <button id="attendance-btn" class="button">Chấm công</button>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/user.js') }}"></script>
+</body>
+</html>

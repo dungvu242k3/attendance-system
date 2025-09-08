@@ -1,0 +1,104 @@
+
+#employeesPage .bg-white {
+    font-family: 'Times New Roman', Times, serif;
+    margin-top: 10px;
+    margin-right: 5px;
+    background-color: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+#employeesPage .bg-white:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+#employeesPage h2 {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 20px;
+    font-weight: 700; 
+    color: #3b86d1;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+
+#searchEmployee,
+#filterPosition {
+    transition: all 0.2s ease;
+}
+#searchEmployee:focus,
+#filterPosition:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+#employeesPage table {
+    border-collapse: collapse;
+    width: 100%;
+}
+#employeesPage thead th {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+#employeesPage tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+#imagePreview {
+    cursor: pointer;
+    transition: 0.3s;
+}
+#imagePreview:hover {
+    border-color: #3b82f6;
+    background: #f0f9ff;
+}
+#imagePreview i {
+    transition: 0.2s;
+}
+#imagePreview:hover i {
+    color: #3b82f6;
+}
+
+#addEmployeePage .bg-white {
+    font-family: 'Times New Roman', Times, serif;
+    margin-top: 10px;
+    background-color: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+#addEmployeePage h2 {
+    font-family: 'Times New Roman', Times, serif;
+    margin-left: 165px;
+    font-size: 20px;
+    font-weight: 700; 
+    color: #3b86d1;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+#addEmployeeForm input,
+#addEmployeeForm select {
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+#addEmployeeForm input:focus,
+#addEmployeeForm select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.25);
+}
+
+#addEmployeeForm button[type="submit"] {
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+#addEmployeeForm button[type="submit"]:hover {
+    transform: translateY(-2px);
+}
+
+#addEmployeeForm button[type="button"]:hover {
+    background: #f9fafb;
+}

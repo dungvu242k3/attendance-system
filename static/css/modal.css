@@ -1,0 +1,76 @@
+#editModal {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+#editModal.flex {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+#editModal .bg-white {
+    border-radius: 30px;
+    max-width: 700px;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    animation: scaleIn 0.25s ease;
+}
+
+#editModal h3 {
+    margin-left: 240px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #3b86d1;
+}
+
+#editModal input,
+#editModal select {
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#editModal input:focus,
+#editModal select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.2);
+    outline: none;
+}
+
+/* Upload ảnh */
+#editImagePreview {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#editImagePreview:hover {
+    border-color: #2563eb;
+    background: #f0f6ff;
+}
+
+/* Nút bấm */
+#editModal button {
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#editModal button[type="submit"]:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+#editModal button[type="button"]:hover {
+    background: #f9fafb;
+    transform: translateY(-1px);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}

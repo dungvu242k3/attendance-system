@@ -1,0 +1,51 @@
+
+services:
+  db:
+    image: ankane/pgvector:latest
+    container_name: yolo_facenet_db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-face_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:  
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: yolo_facenet_app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      FLASK_ENV: ${FLASK_ENV:-development}
+      SECRET_KEY: ${SECRET_KEY:-change_me}
+      DB_NAME: ${DB_NAME:-face_db}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      DB_HOST: db
+      DB_PORT: 5432
+      MODEL_PATH: ${MODEL_PATH:-./models/best_model.pth}
+      CHECKIN_HOUR: ${CHECKIN_HOUR:-9}
+      CHECKOUT_HOUR: ${CHECKOUT_HOUR:-18}
+      USE_MOCK_DETECTOR: ${USE_MOCK_DETECTOR:-false}
+      YOLO_CONFIG_DIR: /app/.ultralytics
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models:ro
+      - ./static:/app/static
+      - ./templates:/app/templates
+      - ./app.log:/app/app.log
+
+volumes:
+  pgdata:

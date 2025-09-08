@@ -1,0 +1,82 @@
+#registerPage input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+#registerPage input:focus {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.3);
+}
+
+#registerPage .form-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+#registerPage .form-group label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 14px;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+#registerPage input:focus + label {
+  transform: translateY(-40px);
+  color: #16a34a;
+  font-size: 12px;
+  background: #fff;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+#registerPage input:not(:placeholder-shown) + label {
+  transform: translateY(-40px);
+  color: #16a34a;
+  font-size: 12px;
+  background: #fff;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+#registerPage .btn-register {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  background-color: #16a34a;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#registerPage .btn-register:hover {
+  background-color: #15803d;
+}
+#registerPage .btn-register {
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  background: #15803d;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 6px 6px 12px #d1d5db, -6px -6px 12px #ffffff;
+}
+
+#registerPage .btn-register:hover {
+  box-shadow: inset 6px 6px 12px #d1d5db, inset -6px -6px 12px #ffffff;
+  background: #15803d;
+}
